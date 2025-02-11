@@ -9,6 +9,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 from models import MODELS
+import subprocess
 
 
 parser = argparse.ArgumentParser()
@@ -17,7 +18,7 @@ parser.add_argument('--batch_size', type=int, default=64, help='The data loader 
 parser.add_argument('--lr', type=float, default=1e-3, help='The optimizer learning rate.')
 parser.add_argument('--optimizer', type=str, default='adam', help='The optimizer type.  Must be one of the keys in the OPTIMIZERS variable in train.py.')
 parser.add_argument('--momentum', type=float, default=0.9, help='The optimizier momentum.  Only applies when optimizer=sgd.')
-parser.add_argument('--epochs', type=int, default=50, help='The number of training epochs.')
+parser.add_argument('--epochs', type=int, default=10, help='The number of training epochs.')
 parser.add_argument('--dataset_path', type=str, default='data/cifar10', help='The directory to store generated models and logs.')
 parser.add_argument('--checkpoint_path', type=str, default=None, help='The path to store the model weights.')
 args = parser.parse_args()
@@ -71,6 +72,16 @@ test_loader = torch.utils.data.DataLoader(
 
 best_accuracy = 0.0
 
+print('epoch, train_loss, test_loss, train_accuracy, test_accuracy')
+print('----------------------------------------------------------')
+
+
+tegrastats_output = f"/TFG/jetson_dla_tutorial/train_excels/tegrastats_{args.model_name}_{args.optimizer}_{args.lr}_{args.momentum}_{args.epochs}.csv"
+
+tegrastats = subprocess.Popen(
+    ["tegrastats", "--interval", "100", "--logfile", tegrastats_output], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+)
+
 for epoch in range(args.epochs):
 
     train_loss = 0.0
@@ -103,6 +114,7 @@ for epoch in range(args.epochs):
     train_loss /= len(train_loader)
 
     model = model.eval()
+    
 
     for image, label in iter(test_loader):
 
@@ -119,8 +131,12 @@ for epoch in range(args.epochs):
     test_accuracy /= len(test_dataset)
     test_loss /= len(test_loader)
 
-    print(f'{epoch}, {train_loss}, {test_loss}, {train_accuracy}, {test_accuracy}')
-
+    #print(f'{epoch}, {train_loss}, {test_loss}, {train_accuracy}, {test_accuracy}')
+    print(f'EPOCH: {epoch}, Train Loss: {train_loss}, Test Loss: {test_loss}, Train Accuracy: {train_accuracy}, Test Accuracy: {test_accuracy}')
+    
     if test_accuracy > best_accuracy and args.checkpoint_path is not None:
         print(f'Saving checkpoint to {args.checkpoint_path} for model with test accuracy {test_accuracy}.')
         torch.save(model.state_dict(), args.checkpoint_path)
+        
+tegrastats.terminate()
+print('Training complete.')

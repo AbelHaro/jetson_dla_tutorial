@@ -9,6 +9,9 @@ import tensorrt as trt
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import subprocess
+from hardware_stats_usage import create_tegrastats_file
+import cv2
 
 
 parser = argparse.ArgumentParser()
@@ -64,25 +67,48 @@ bindings[output_binding_idx] = output_buffer.data_ptr()
 
 test_accuracy = 0
 
+tegrastats_output = f"/TFG/jetson_dla_tutorial/eval_excels/tegrastats_{args.engine}_batch_size_{args.batch_size}_raw.csv"
+filtered_tegrastats_output = f"/TFG/jetson_dla_tutorial/eval_excels/tegrastats_{args.engine}_batch_size_{args.batch_size}.csv"
+
+os.makedirs(os.path.dirname(tegrastats_output), exist_ok=True)
+
+# run tegrastats in the background
+tegrastats = subprocess.Popen(
+    ["tegrastats", "--interval", "100", "--logfile", tegrastats_output], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+)
+
+
 # run through test dataset
-for image, label in iter(test_loader):
+for i in range(10):
+    for image, label in iter(test_loader):
 
-    actual_batch_size = int(image.shape[0])
+        actual_batch_size = int(image.shape[0])
 
-    input_buffer[0:actual_batch_size].copy_(image)
+        input_buffer[0:actual_batch_size].copy_(image)
 
-    context.execute_async_v2(
-        bindings,
-        torch.cuda.current_stream().cuda_stream
-    )
+        context.execute_async_v2(
+            bindings,
+            torch.cuda.current_stream().cuda_stream
+        )
 
-    torch.cuda.current_stream().synchronize()
+        torch.cuda.current_stream().synchronize()
 
-    output = output_buffer[0:actual_batch_size]
-    label = label.cuda()
+        output = output_buffer[0:actual_batch_size]
+        label = label.cuda()
 
-    test_accuracy += int(torch.sum(output.argmax(dim=-1) == label))
+        test_accuracy += int(torch.sum(output.argmax(dim=-1) == label))
+        
+        #print(f'Image: {image.shape}, Label: {label}, Prediction: {output.argmax(dim=-1)}')
 
-test_accuracy /= len(test_dataset)
+    test_accuracy /= len(test_dataset)
 
-print(f'TEST ACCURACY: {test_accuracy}')
+    print(f'TEST ACCURACY: {test_accuracy}')
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+tegrastats.terminate()
+
+create_tegrastats_file(tegrastats_output, filtered_tegrastats_output)
+print(f"Datos de tegrastats guardados en {filtered_tegrastats_output}")
+os.remove(tegrastats_output)

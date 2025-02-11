@@ -1,0 +1,81 @@
+&&&& RUNNING TensorRT.trtexec [TensorRT v8502] # /usr/src/tensorrt/bin/trtexec --onnx=model_gn.onnx --shapes=input:32x3x32x32 --saveEngine=model_gn.engine --exportProfile=model_gn.json --int8 --useDLACore=0 --allowGPUFallback --useSpinWait --separateProfileRun
+[01/29/2025-10:10:55] [I] === Model Options ===
+[01/29/2025-10:10:55] [I] Format: ONNX
+[01/29/2025-10:10:55] [I] Model: model_gn.onnx
+[01/29/2025-10:10:55] [I] Output:
+[01/29/2025-10:10:55] [I] === Build Options ===
+[01/29/2025-10:10:55] [I] Max batch: explicit batch
+[01/29/2025-10:10:55] [I] Memory Pools: workspace: default, dlaSRAM: default, dlaLocalDRAM: default, dlaGlobalDRAM: default
+[01/29/2025-10:10:55] [I] minTiming: 1
+[01/29/2025-10:10:55] [I] avgTiming: 8
+[01/29/2025-10:10:55] [I] Precision: FP32+INT8
+[01/29/2025-10:10:55] [I] LayerPrecisions: 
+[01/29/2025-10:10:55] [I] Calibration: Dynamic
+[01/29/2025-10:10:55] [I] Refit: Disabled
+[01/29/2025-10:10:55] [I] Sparsity: Disabled
+[01/29/2025-10:10:55] [I] Safe mode: Disabled
+[01/29/2025-10:10:55] [I] DirectIO mode: Disabled
+[01/29/2025-10:10:55] [I] Restricted mode: Disabled
+[01/29/2025-10:10:55] [I] Build only: Disabled
+[01/29/2025-10:10:55] [I] Save engine: model_gn.engine
+[01/29/2025-10:10:55] [I] Load engine: 
+[01/29/2025-10:10:55] [I] Profiling verbosity: 0
+[01/29/2025-10:10:55] [I] Tactic sources: Using default tactic sources
+[01/29/2025-10:10:55] [I] timingCacheMode: local
+[01/29/2025-10:10:55] [I] timingCacheFile: 
+[01/29/2025-10:10:55] [I] Heuristic: Disabled
+[01/29/2025-10:10:55] [I] Preview Features: Use default preview flags.
+[01/29/2025-10:10:55] [I] Input(s)s format: fp32:CHW
+[01/29/2025-10:10:55] [I] Output(s)s format: fp32:CHW
+[01/29/2025-10:10:55] [I] Input build shape: input=32x3x32x32+32x3x32x32+32x3x32x32
+[01/29/2025-10:10:55] [I] Input calibration shapes: model
+[01/29/2025-10:10:55] [I] === System Options ===
+[01/29/2025-10:10:55] [I] Device: 0
+[01/29/2025-10:10:55] [I] DLACore: 0(With GPU fallback)
+[01/29/2025-10:10:55] [I] Plugins:
+[01/29/2025-10:10:55] [I] === Inference Options ===
+[01/29/2025-10:10:55] [I] Batch: Explicit
+[01/29/2025-10:10:55] [I] Input inference shape: input=32x3x32x32
+[01/29/2025-10:10:55] [I] Iterations: 10
+[01/29/2025-10:10:55] [I] Duration: 3s (+ 200ms warm up)
+[01/29/2025-10:10:55] [I] Sleep time: 0ms
+[01/29/2025-10:10:55] [I] Idle time: 0ms
+[01/29/2025-10:10:55] [I] Streams: 1
+[01/29/2025-10:10:55] [I] ExposeDMA: Disabled
+[01/29/2025-10:10:55] [I] Data transfers: Enabled
+[01/29/2025-10:10:55] [I] Spin-wait: Enabled
+[01/29/2025-10:10:55] [I] Multithreading: Disabled
+[01/29/2025-10:10:55] [I] CUDA Graph: Disabled
+[01/29/2025-10:10:55] [I] Separate profiling: Enabled
+[01/29/2025-10:10:55] [I] Time Deserialize: Disabled
+[01/29/2025-10:10:55] [I] Time Refit: Disabled
+[01/29/2025-10:10:55] [I] NVTX verbosity: 0
+[01/29/2025-10:10:55] [I] Persistent Cache Ratio: 0
+[01/29/2025-10:10:55] [I] Inputs:
+[01/29/2025-10:10:55] [I] === Reporting Options ===
+[01/29/2025-10:10:55] [I] Verbose: Disabled
+[01/29/2025-10:10:55] [I] Averages: 10 inferences
+[01/29/2025-10:10:55] [I] Percentiles: 90,95,99
+[01/29/2025-10:10:55] [I] Dump refittable layers:Disabled
+[01/29/2025-10:10:55] [I] Dump output: Disabled
+[01/29/2025-10:10:55] [I] Profile: Disabled
+[01/29/2025-10:10:55] [I] Export timing to JSON file: 
+[01/29/2025-10:10:55] [I] Export output to JSON file: 
+[01/29/2025-10:10:55] [I] Export profile to JSON file: model_gn.json
+[01/29/2025-10:10:55] [I] 
+[01/29/2025-10:10:55] [I] === Device Information ===
+[01/29/2025-10:10:55] [I] Selected Device: Xavier
+[01/29/2025-10:10:55] [I] Compute Capability: 7.2
+[01/29/2025-10:10:55] [I] SMs: 8
+[01/29/2025-10:10:55] [I] Compute Clock Rate: 1.377 GHz
+[01/29/2025-10:10:55] [I] Device Global Memory: 30990 MiB
+[01/29/2025-10:10:55] [I] Shared Memory per SM: 96 KiB
+[01/29/2025-10:10:55] [I] Memory Bus Width: 256 bits (ECC disabled)
+[01/29/2025-10:10:55] [I] Memory Clock Rate: 1.377 GHz
+[01/29/2025-10:10:55] [I] 
+[01/29/2025-10:10:55] [I] TensorRT version: 8.5.2
+[01/29/2025-10:10:56] [I] [TRT] [MemUsageChange] Init CUDA: CPU +187, GPU +0, now: CPU 216, GPU 10953 (MiB)
+[01/29/2025-10:10:57] [I] [TRT] [MemUsageChange] Init builder kernel library: CPU +106, GPU +92, now: CPU 344, GPU 11069 (MiB)
+[01/29/2025-10:10:57] [I] Start parsing network model
+[01/29/2025-10:10:57] [I] Finish parsing network model
+&&&& FAILED TensorRT.trtexec [TensorRT v8502] # /usr/src/tensorrt/bin/trtexec --onnx=model_gn.onnx --shapes=input:32x3x32x32 --saveEngine=model_gn.engine --exportProfile=model_gn.json --int8 --useDLACore=0 --allowGPUFallback --useSpinWait --separateProfileRun
