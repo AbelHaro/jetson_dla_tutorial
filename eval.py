@@ -20,23 +20,18 @@ parser.add_argument('--batch_size', type=int, default=1)
 parser.add_argument('--dataset_path', type=str, default='data/cifar10')
 args = parser.parse_args()
 
-transform = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-])
+transform = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ]
+)
 
 test_dataset = torchvision.datasets.CIFAR10(
-    root=args.dataset_path, 
-    train=False,
-    download=True, 
-    transform=transform
+    root=args.dataset_path, train=False, download=True, transform=transform
 )
 
-test_loader = torch.utils.data.DataLoader(
-    test_dataset, 
-    batch_size=args.batch_size,
-    shuffle=False
-)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
 logger = trt.Logger()
 runtime = trt.Runtime(logger)
@@ -53,10 +48,7 @@ output_binding_idx = engine.get_binding_index('output')
 input_shape = (args.batch_size, 3, 32, 32)
 output_shape = (args.batch_size, 10)
 
-context.set_binding_shape(
-    input_binding_idx,
-    input_shape
-)
+context.set_binding_shape(input_binding_idx, input_shape)
 
 input_buffer = torch.zeros(input_shape, dtype=torch.float32, device=torch.device('cuda'))
 output_buffer = torch.zeros(output_shape, dtype=torch.float32, device=torch.device('cuda'))
@@ -74,7 +66,10 @@ os.makedirs(os.path.dirname(tegrastats_output), exist_ok=True)
 
 # run tegrastats in the background
 tegrastats = subprocess.Popen(
-    ["tegrastats", "--interval", "100", "--logfile", tegrastats_output], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    ["tegrastats", "--interval", "100", "--logfile", tegrastats_output],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True,
 )
 
 
@@ -86,10 +81,7 @@ for i in range(10):
 
         input_buffer[0:actual_batch_size].copy_(image)
 
-        context.execute_async_v2(
-            bindings,
-            torch.cuda.current_stream().cuda_stream
-        )
+        context.execute_async_v2(bindings, torch.cuda.current_stream().cuda_stream)
 
         torch.cuda.current_stream().synchronize()
 
@@ -97,8 +89,8 @@ for i in range(10):
         label = label.cuda()
 
         test_accuracy += int(torch.sum(output.argmax(dim=-1) == label))
-        
-        #print(f'Image: {image.shape}, Label: {label}, Prediction: {output.argmax(dim=-1)}')
+
+        # print(f'Image: {image.shape}, Label: {label}, Prediction: {output.argmax(dim=-1)}')
 
     test_accuracy /= len(test_dataset)
 

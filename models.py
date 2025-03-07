@@ -6,12 +6,8 @@ import torch
 import torch.nn as nn
 
 
-__all__ = [
-    'ModelGN',
-    'ModelBN',
-    'MODELS'
-]
-    
+__all__ = ['ModelGN', 'ModelBN', 'MODELS']
+
 
 class ModelGN(nn.Module):
     def __init__(self):
@@ -28,7 +24,7 @@ class ModelGN(nn.Module):
             nn.ReLU(),
             nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1),
             nn.GroupNorm(8, 512),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
         self.linear = nn.Linear(512, 10)
@@ -56,7 +52,7 @@ class ModelBN(nn.Module):
             nn.ReLU(),
             nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1),
             nn.BatchNorm2d(512),
-            nn.ReLU()
+            nn.ReLU(),
         )
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
         self.linear = nn.Linear(512, 10)
@@ -69,7 +65,4 @@ class ModelBN(nn.Module):
         return x
 
 
-MODELS = {
-    'model_gn': ModelGN,
-    'model_bn': ModelBN
-}
+MODELS = {'model_gn': ModelGN, 'model_bn': ModelBN}
