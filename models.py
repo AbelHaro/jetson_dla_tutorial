@@ -6,7 +6,19 @@ import torch
 import torch.nn as nn
 
 
-__all__ = ['ModelGN', 'ModelBN', 'MODELS']
+__all__ = ["ModelGN", "ModelBN", "MODELS"]
+
+"""
+Models for image classification using PyTorch.
+
+This file contains CNN model implementations with different normalization techniques:
+- ModelGN: Uses Group Normalization, which normalizes across groups of channels, in this model the GroupNorm layer is not supported by the DLA
+- ModelBN: Uses Batch Normalization, which normalizes across the batch dimension, in this model the BatchNorm layer is supported by the DLA
+
+Both models share the same architecture with 4 convolutional layers followed by
+adaptive average pooling and a fully connected layer. The models are designed
+for 10-class classification tasks.
+"""
 
 
 class ModelGN(nn.Module):
@@ -65,4 +77,4 @@ class ModelBN(nn.Module):
         return x
 
 
-MODELS = {'model_gn': ModelGN, 'model_bn': ModelBN}
+MODELS = {"model_gn": ModelGN, "model_bn": ModelBN}

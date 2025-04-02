@@ -14,39 +14,50 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    'model_name',
+    "model_name",
     type=str,
-    help='The name of the model.  See the MODELS dictionary in models.py for options.',
-)
-parser.add_argument('--batch_size', type=int, default=64, help='The data loader batch size.')
-parser.add_argument('--lr', type=float, default=1e-3, help='The optimizer learning rate.')
-parser.add_argument(
-    '--optimizer',
-    type=str,
-    default='adam',
-    help='The optimizer type.  Must be one of the keys in the OPTIMIZERS variable in train.py.',
+    help="The name of the model.  See the MODELS dictionary in models.py for options.",
 )
 parser.add_argument(
-    '--momentum',
+    "--batch_size", type=int, default=64, help="The data loader batch size."
+)
+parser.add_argument(
+    "--lr", type=float, default=1e-3, help="The optimizer learning rate."
+)
+parser.add_argument(
+    "--optimizer",
+    type=str,
+    default="adam",
+    help="The optimizer type.  Must be one of the keys in the OPTIMIZERS variable in train.py.",
+)
+parser.add_argument(
+    "--momentum",
     type=float,
     default=0.9,
-    help='The optimizier momentum.  Only applies when optimizer=sgd.',
+    help="The optimizier momentum.  Only applies when optimizer=sgd.",
 )
-parser.add_argument('--epochs', type=int, default=10, help='The number of training epochs.')
 parser.add_argument(
-    '--dataset_path',
+    "--epochs", type=int, default=10, help="The number of training epochs."
+)
+parser.add_argument(
+    "--dataset_path",
     type=str,
-    default='data/cifar10',
-    help='The directory to store generated models and logs.',
+    default="data/cifar10",
+    help="The directory to store generated models and logs.",
 )
 parser.add_argument(
-    '--checkpoint_path', type=str, default=None, help='The path to store the model weights.'
+    "--checkpoint_path",
+    type=str,
+    default=None,
+    help="The path to store the model weights.",
 )
 args = parser.parse_args()
 
 OPTIMIZERS = {
-    'sgd': lambda params, args: torch.optim.SGD(params, lr=args.lr, momentum=args.momentum),
-    'adam': lambda params, args: torch.optim.Adam(params, lr=args.lr),
+    "sgd": lambda params, args: torch.optim.SGD(
+        params, lr=args.lr, momentum=args.momentum
+    ),
+    "adam": lambda params, args: torch.optim.Adam(params, lr=args.lr),
 }
 
 model = MODELS[args.model_name]().cuda()
@@ -73,18 +84,22 @@ train_dataset = torchvision.datasets.CIFAR10(
     root=args.dataset_path, train=True, download=True, transform=transform_train
 )
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+train_loader = torch.utils.data.DataLoader(
+    train_dataset, batch_size=args.batch_size, shuffle=True
+)
 
 test_dataset = torchvision.datasets.CIFAR10(
     root=args.dataset_path, train=False, download=True, transform=transform_test
 )
 
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+test_loader = torch.utils.data.DataLoader(
+    test_dataset, batch_size=args.batch_size, shuffle=False
+)
 
 best_accuracy = 0.0
 
-print('epoch, train_loss, test_loss, train_accuracy, test_accuracy')
-print('----------------------------------------------------------')
+print("epoch, train_loss, test_loss, train_accuracy, test_accuracy")
+print("----------------------------------------------------------")
 
 
 tegrastats_output = f"/TFG/jetson_dla_tutorial/train_excels/tegrastats_{args.model_name}_{args.optimizer}_{args.lr}_{args.momentum}_{args.epochs}.csv"
@@ -146,14 +161,14 @@ for epoch in range(args.epochs):
 
     # print(f'{epoch}, {train_loss}, {test_loss}, {train_accuracy}, {test_accuracy}')
     print(
-        f'EPOCH: {epoch}, Train Loss: {train_loss}, Test Loss: {test_loss}, Train Accuracy: {train_accuracy}, Test Accuracy: {test_accuracy}'
+        f"EPOCH: {epoch}, Train Loss: {train_loss}, Test Loss: {test_loss}, Train Accuracy: {train_accuracy}, Test Accuracy: {test_accuracy}"
     )
 
     if test_accuracy > best_accuracy and args.checkpoint_path is not None:
         print(
-            f'Saving checkpoint to {args.checkpoint_path} for model with test accuracy {test_accuracy}.'
+            f"Saving checkpoint to {args.checkpoint_path} for model with test accuracy {test_accuracy}."
         )
         torch.save(model.state_dict(), args.checkpoint_path)
 
 tegrastats.terminate()
-print('Training complete.')
+print("Training complete.")
